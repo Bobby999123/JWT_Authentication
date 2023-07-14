@@ -83,7 +83,7 @@ exports.login = async(req,res) =>{
         }
         
         // check email in database
-        const exitingUser = await User.findOne({email});
+        let exitingUser = await User.findOne({email});
 
         // if user not exist before
         if(!exitingUser){
@@ -116,19 +116,25 @@ exports.login = async(req,res) =>{
                     expiresIn:"2h"
                 }
                 );
+
+                // console.log(exitingUser);
+
+            exitingUser = exitingUser.toObject();     // why we need to convert it into object
+
             
             exitingUser.token = token;
+            // console.log(exitingUser);
             exitingUser.password = undefined;
+            // console.log(exitingUser);
 
+
+            // create option to pass in cookie function
             const options = {
                 expires:new Date(Date.now() + 3*24*60*60*1000),
                 httpOnly:true,
             }
 
-
-
-
-            res.cookie("token",token,options).status(200).json({
+            res.cookie("bobbycookie",token,options).status(200).json({
                 success:true,
                 token,
                 exitingUser,
